@@ -7,7 +7,7 @@ if TYPE_CHECKING:
     import napari
 
 
-class ExampleQWidget(QWidget):
+class BasicWidget(QWidget):
     """Example widget class."""
 
     def __init__(self, viewer: "napari.viewer.Viewer"):
@@ -27,4 +27,4 @@ class ExampleQWidget(QWidget):
 
 @napari_hook_implementation
 def napari_experimental_provide_dock_widget():  # noqa
-    return [ExampleQWidget]
+    return [BasicWidget]

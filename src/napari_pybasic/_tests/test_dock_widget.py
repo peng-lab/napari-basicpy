@@ -7,7 +7,7 @@ import napari_pybasic
 # this is your plugin name declared in your napari.plugins entry point
 MY_PLUGIN_NAME = "napari-pybasic"
 # the name of your widget(s)
-MY_WIDGET_NAMES = ["Example Q Widget"]
+MY_WIDGET_NAMES = ["Basic Widget"]
 
 
 @pytest.mark.parametrize("widget_name", MY_WIDGET_NAMES)

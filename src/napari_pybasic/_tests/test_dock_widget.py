@@ -1,14 +1,20 @@
-import napari_pybasic
+"""Testing functions."""
+
 import pytest
+
+import napari_pybasic
 
 # this is your plugin name declared in your napari.plugins entry point
 MY_PLUGIN_NAME = "napari-pybasic"
 # the name of your widget(s)
-MY_WIDGET_NAMES = ["Example Q Widget", "example_magic_widget"]
+MY_WIDGET_NAMES = ["Example Q Widget"]
 
 
 @pytest.mark.parametrize("widget_name", MY_WIDGET_NAMES)
-def test_something_with_viewer(widget_name, make_napari_viewer, napari_plugin_manager):
+def test_something_with_viewer(
+    widget_name, make_napari_viewer, napari_plugin_manager
+):  # noqa
+    """Test that the widget loads properly in napari."""
     napari_plugin_manager.register(napari_pybasic, name=MY_PLUGIN_NAME)
     viewer = make_napari_viewer()
     num_dw = len(viewer.window._dock_widgets)

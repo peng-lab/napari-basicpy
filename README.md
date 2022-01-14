@@ -1,13 +1,17 @@
 # napari-basicpy
 
-[![License](https://img.shields.io/pypi/l/napari-pybasic.svg?color=green)](https://github.com/tdmorello/napari-pybasic/raw/main/LICENSE)
-[![PyPI](https://img.shields.io/pypi/v/napari-pybasic.svg?color=green)](https://pypi.org/project/napari-pybasic)
-[![Python Version](https://img.shields.io/pypi/pyversions/napari-pybasic.svg?color=green)](https://python.org)
-[![tests](https://github.com/tdmorello/napari-pybasic/workflows/tests/badge.svg)](https://github.com/tdmorello/napari-pybasic/actions)
-[![codecov](https://codecov.io/gh/tdmorello/napari-pybasic/branch/main/graph/badge.svg)](https://codecov.io/gh/tdmorello/napari-pybasic)
-[![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-pybasic)](https://napari-hub.org/plugins/napari-pybasic)
+[![License](https://img.shields.io/pypi/l/napari-basicpy.svg?color=green)](https://github.com/tdmorello/napari-basicpy/raw/main/LICENSE)
+[![PyPI](https://img.shields.io/pypi/v/napari-basicpy.svg?color=green)](https://pypi.org/project/napari-basicpy)
+[![Python Version](https://img.shields.io/pypi/pyversions/napari-basicpy.svg?color=green)](https://python.org)
+[![tests](https://github.com/tdmorello/napari-basicpy/workflows/tests/badge.svg)](https://github.com/tdmorello/napari-basicpy/actions)
+[![codecov](https://codecov.io/gh/tdmorello/napari-basicpy/branch/main/graph/badge.svg)](https://codecov.io/gh/tdmorello/napari-basicpy)
+[![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-basicpy)](https://napari-hub.org/plugins/napari-basicpy)
 
 BaSiCPy illumination correction for napari
+
+Example:
+
+![example](resources/example.gif)
 
 ----------------------------------
 
@@ -42,7 +46,7 @@ the coverage at least stays the same before you submit a pull request.
 ## License
 
 Distributed under the terms of the [BSD-3] license,
-"napari-pybasic" is free and open source software
+"napari-basicpy" is free and open source software
 
 ## Issues
 

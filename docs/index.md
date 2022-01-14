@@ -1,3 +1,3 @@
-# Welcome to napari-pybasic
+# Welcome to napari-basicpy
 
-PyBaSiC illumination correction for napari
+BaSiCPy illumination correction for napari

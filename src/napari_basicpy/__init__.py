@@ -1,4 +1,4 @@
-"""PyBaSic plugin for napari."""
+"""BaSiCPy plugin for napari."""
 
 try:
     from ._version import version as __version__

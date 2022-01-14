@@ -1,11 +1,10 @@
-site_name: napari-pybasic
-site_description: PyBaSiC illumination correction for napari
+site_name: napari-basicpy
+site_description: BaSiCPY illumination correction for napari
 site_author: Tim Morello
 
 theme: readthedocs
 
-
-repo_url: https://github.com/tdmorello/napari-pybasic
+repo_url: https://github.com/tdmorello/napari-basicpy
 
 pages:
-- Home: index.md
+  - Home: index.md

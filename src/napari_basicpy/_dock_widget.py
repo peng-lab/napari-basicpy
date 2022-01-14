@@ -16,7 +16,7 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from napari_pybasic._mock_basic import MockBaSiC
+from napari_basicpy._mock_basic import MockBaSiC as BaSiC
 
 if TYPE_CHECKING:
     import napari  # pragma: no cover
@@ -67,7 +67,7 @@ class BasicWidget(QWidget):
             connect={"yielded": update_layer, "returned": update_layer},
         )
         def call_basic(image):
-            basic = MockBaSiC()
+            basic = BaSiC()
             fit = basic.fit(image, updates=True)
             while True:
                 try:

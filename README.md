@@ -1,4 +1,4 @@
-# napari-pybasic
+# napari-basicpy
 
 [![License](https://img.shields.io/pypi/l/napari-pybasic.svg?color=green)](https://github.com/tdmorello/napari-pybasic/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-pybasic.svg?color=green)](https://pypi.org/project/napari-pybasic)
@@ -7,7 +7,7 @@
 [![codecov](https://codecov.io/gh/tdmorello/napari-pybasic/branch/main/graph/badge.svg)](https://codecov.io/gh/tdmorello/napari-pybasic)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-pybasic)](https://napari-hub.org/plugins/napari-pybasic)
 
-PyBaSiC illumination correction for napari
+BaSiCPy illumination correction for napari
 
 ----------------------------------
 
@@ -23,15 +23,15 @@ https://napari.org/plugins/stable/index.html
 
 ## Installation
 
-You can install `napari-pybasic` via [pip]:
+You can install `napari-basicpy` via [pip]:
 
-    pip install napari-pybasic
+    pip install napari-basicpy
 
 
 
 To install latest development version :
 
-    pip install git+https://github.com/tdmorello/napari-pybasic.git
+    pip install git+https://github.com/tdmorello/napari-basicpy.git
 
 
 ## Contributing
@@ -59,7 +59,7 @@ If you encounter any problems, please [file an issue] along with a detailed desc
 [Mozilla Public License 2.0]: https://www.mozilla.org/media/MPL/2.0/index.txt
 [cookiecutter-napari-plugin]: https://github.com/napari/cookiecutter-napari-plugin
 
-[file an issue]: https://github.com/tdmorello/napari-pybasic/issues
+[file an issue]: https://github.com/tdmorello/napari-basicpy/issues
 
 [napari]: https://github.com/napari/napari
 [tox]: https://tox.readthedocs.io/en/latest/

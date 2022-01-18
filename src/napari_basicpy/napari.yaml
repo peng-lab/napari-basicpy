@@ -2,6 +2,10 @@ name: napari-basicpy
 display_name: BaSiCpy shadow correction in napari
 schema_version: 0.1.0
 contributions:
-  commands:
-  - id: example-plugin.hello_world
-    title: Hello World
+  commands: 
+  - id: napari-basicpy.shadow_correction
+    title: Apply BaSiC Shadow Correction
+    python_name: napari_basicpy._dock_widget:BasicWidget
+  widgets:
+  - command: napari-basicpy.shadow_correction
+    display_name: BaSiC Shadow Correction

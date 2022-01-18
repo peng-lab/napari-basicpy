@@ -40,10 +40,11 @@ class BasicWidget(QWidget):
 
         settings_layout = QFormLayout()
         settings_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
-        settings_layout.addRow("Setting 1", QSpinBox())
-        settings_layout.addRow("Setting 2", QSlider(Qt.Horizontal))
-        settings_layout.addRow("Setting 3", QCheckBox())
-        settings_layout.addRow("Setting 4", QCheckBox())
+
+        settings = BaSiC().dict()
+        for k, v in settings.items():
+            description = BaSiC.__fields__[k].field_info.description
+            settings_layout.addRow(description, QSpinBox())
         self.settings_container = QWidget()
         self.settings_container.setLayout(settings_layout)
 

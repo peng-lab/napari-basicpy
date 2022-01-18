@@ -1,0 +1,7 @@
+name: napari-basicpy
+display_name: BaSiCpy shadow correction in napari
+schema_version: 0.1.0
+contributions:
+  commands:
+  - id: example-plugin.hello_world
+    title: Hello World

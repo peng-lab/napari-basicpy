@@ -4,7 +4,6 @@ from typing import TYPE_CHECKING, Optional
 
 from magicgui.widgets import create_widget
 from napari.qt.threading import thread_worker
-from napari_plugin_engine import napari_hook_implementation
 from qtpy.QtCore import QEvent, Qt
 from qtpy.QtWidgets import (
     QCheckBox,
@@ -96,8 +95,3 @@ class BasicWidget(QWidget):
     def reset_choices(self, event: Optional[QEvent] = None) -> None:
         """Repopulate image list."""
         self.layer_select.reset_choices(event)
-
-
-@napari_hook_implementation
-def napari_experimental_provide_dock_widget():  # noqa
-    return [BasicWidget]

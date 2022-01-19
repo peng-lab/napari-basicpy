@@ -5,7 +5,14 @@ contributions:
   commands:
     - id: napari-basicpy.shadow_correction
       title: Apply BaSiC Shadow Correction
-      python_name: napari_basicpy._dock_widget:BasicWidget
+      python_name: napari_basicpy._widget:BasicWidget
+    - id: napari-basicpy.sample_data
+      title: Provide artifical example
+      python_name: napari_basicpy._sample_data:make_sample_data
   widgets:
     - command: napari-basicpy.shadow_correction
       display_name: BaSiC Shadow Correction
+  sample_data:
+    - key: sample_data
+      display_name: Sample Data
+      command: napari-basicpy.sample_data

@@ -1,21 +1,14 @@
+import enum
 import logging
-from functools import partial
 from typing import TYPE_CHECKING, Optional
 
+import numpy as np
 from magicgui.widgets import create_widget
-from napari.qt.threading import thread_worker
-from qtpy.QtCore import QEvent, Qt
-from qtpy.QtWidgets import (
-    QCheckBox,
-    QFormLayout,
-    QPushButton,
-    QSlider,
-    QSpinBox,
-    QVBoxLayout,
-    QWidget,
-)
+from pybasic import BaSiC
+from qtpy.QtCore import QEvent
+from qtpy.QtWidgets import QFormLayout, QPushButton, QVBoxLayout, QWidget
 
-from napari_basicpy._mock_basic import MockBaSiC as BaSiC
+# from napari_basicpy._mock_basic import MockBaSiC as BaSiC
 
 if TYPE_CHECKING:
     import napari  # pragma: no cover
@@ -27,24 +20,42 @@ class BasicWidget(QWidget):
     """Example widget class."""
 
     def __init__(self, viewer: "napari.viewer.Viewer"):
-        """Init example widget."""
+        """Init example widget."""  # noqa DAR101
         super().__init__()
         self.viewer = viewer
 
         self.setLayout(QVBoxLayout())
-        self.layer_select = create_widget(
-            annotation="napari.layers.Layer", label="image_layer"
-        )
-        self.layout().addWidget(self.layer_select.native)
 
         settings_layout = QFormLayout()
         settings_layout.setFieldGrowthPolicy(QFormLayout.AllNonFixedFieldsGrow)
-        settings_layout.addRow("Setting 1", QSpinBox())
-        settings_layout.addRow("Setting 2", QSlider(Qt.Horizontal))
-        settings_layout.addRow("Setting 3", QCheckBox())
-        settings_layout.addRow("Setting 4", QCheckBox())
+
         self.settings_container = QWidget()
         self.settings_container.setLayout(settings_layout)
+
+        self.layer_select = create_widget(
+            annotation="napari.layers.Layer", label="image_layer"
+        )
+        settings_layout.addRow("layer", self.layer_select.native)
+
+        # keys = BaSiC().settings.keys()
+        for k in BaSiC().settings.keys():
+            field = BaSiC.__fields__[k]
+
+            default = field.default
+            description = field.field_info.description
+            type_ = field.type_
+            if issubclass(type_, enum.Enum):
+                try:
+                    default = type_[default]
+                except KeyError:
+                    default = default
+            name = field.name
+            w = create_widget(
+                value=default,
+                annotation=type_,
+                options={"tooltip": description},
+            )
+            settings_layout.addRow(name, w.native)
 
         self.run_btn = QPushButton("Run")
         self.run_btn.clicked.connect(self._run)
@@ -61,28 +72,33 @@ class BasicWidget(QWidget):
             except KeyError:
                 self.viewer.add_image(image, name="result")
 
-        @thread_worker(
-            start_thread=False,
-            connect={"yielded": update_layer, "returned": update_layer},
-        )
-        def call_basic(image):
-            basic = BaSiC()
-            fit = basic.fit(image, updates=True)
-            while True:
-                try:
-                    yield next(fit)
-                except StopIteration as final:
-                    return final.value
+        # @thread_worker(
+        #     start_thread=False,
+        #     connect={"yielded": update_layer, "returned": update_layer},
+        # )
+        def call_basic(data):
+            basic = BaSiC(get_darkfield=False)
+            corrected = basic(data)
+            update_layer(corrected)
+            # fit = basic.fit(image, updates=True)
+            # while True:
+            #     try:
+            #         yield next(fit)
+            #     except StopIteration as final:
+            #         return final.value
 
         logger.info("Starting BaSiC")
 
         data = self.layer_select.value.data
-        worker = call_basic(data)
+        data = np.moveaxis(data, 0, -1)
+        call_basic(data)
 
-        self.cancel_btn.clicked.connect(partial(self._cancel, worker=worker))
-        worker.finished.connect(self.cancel_btn.clicked.disconnect)
+        # worker = call_basic(data)
 
-        worker.start()
+        # self.cancel_btn.clicked.connect(partial(self._cancel, worker=worker))
+        # worker.finished.connect(self.cancel_btn.clicked.disconnect)
+
+        # worker.start()
 
     def _cancel(self, worker):
         logger.info("Canceling BasiC")
@@ -93,5 +109,5 @@ class BasicWidget(QWidget):
         self.reset_choices()
 
     def reset_choices(self, event: Optional[QEvent] = None) -> None:
-        """Repopulate image list."""
+        """Repopulate image list."""  # noqa DAR101
         self.layer_select.reset_choices(event)

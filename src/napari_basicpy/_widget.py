@@ -1,9 +1,11 @@
 import enum
 import logging
+from functools import partial
 from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 from magicgui.widgets import create_widget
+from napari.qt import thread_worker
 from pybasic import BaSiC
 from qtpy.QtCore import QEvent
 from qtpy.QtWidgets import QFormLayout, QGroupBox, QPushButton, QVBoxLayout, QWidget
@@ -107,19 +109,32 @@ class BasicWidget(QWidget):
         data, meta, _ = self.layer_select.value.as_layer_data_tuple()
         data = np.moveaxis(data, 0, -1)
 
-        # FIXME passing settings breaks BaSiC
-        # basic = BaSiC(**self.settings)
-        basic = BaSiC()
-        corrected = basic.fit_predict(data)
-        corrected = np.moveaxis(corrected, -1, 0)
-        flatfield = basic.flatfield
-        if self.settings["get_darkfield"]:
-            darkfield = basic.darkfield
-            self.viewer.add_image(darkfield)
-        self.viewer.add_image(flatfield)
-        self.viewer.add_image(corrected, **meta)
+        def update_layer(update):
+            data, meta = update
+            self.viewer.add_image(data, **meta)
 
-        logger.info("Starting BaSiC")
+        @thread_worker(
+            start_thread=False,
+            # connect={"yielded": update_layer, "returned": update_layer},
+            connect={"returned": update_layer},
+        )
+        def call_basic(data):
+            # FIXME passing settings breaks BaSiC
+            # basic = BaSiC(**self.settings)
+            basic = BaSiC()
+            corrected = basic.fit_predict(data)
+            corrected = np.moveaxis(corrected, -1, 0)
+            return corrected, meta
+            # flatfield = basic.flatfield
+            # if self.settings["get_darkfield"]:
+            #     darkfield = basic.darkfield
+            #     self.viewer.add_image(darkfield)
+            # self.viewer.add_image(flatfield)
+
+        worker = call_basic(data)
+        self.cancel_btn.clicked.connect(partial(self._cancel, worker=worker))
+        worker.finished.connect(self.cancel_btn.clicked.disconnect)
+        worker.start()
 
     def _cancel(self, worker):
         logger.info("Canceling BasiC")

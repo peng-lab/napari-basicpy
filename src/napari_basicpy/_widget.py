@@ -33,11 +33,10 @@ class BasicWidget(QWidget):
         self.settings_container.setLayout(settings_layout)
 
         self.layer_select = create_widget(
-            annotation="napari.layers.Layer", label="image_layer"
+            annotation="napari.layers.Layer", label="layer_select"
         )
         settings_layout.addRow("layer", self.layer_select.native)
 
-        # keys = BaSiC().settings.keys()
         for k in BaSiC().settings.keys():
             field = BaSiC.__fields__[k]
 
@@ -66,6 +65,16 @@ class BasicWidget(QWidget):
         self.layout().addWidget(self.cancel_btn)
 
     def _run(self):
+
+        data, meta, _ = self.layer_select.value.as_layer_data_tuple()
+        data = np.moveaxis(data, 0, -1)
+
+        basic = BaSiC()
+        corrected = basic.fit_predict(data)
+        corrected = np.moveaxis(corrected, -1, 0)
+        # the meta dict transfers all metadata settings from original to new layer
+        self.viewer.add_image(corrected, **meta)
+
         def update_layer(image):
             try:
                 self.viewer.layers["result"].data = image
@@ -89,16 +98,20 @@ class BasicWidget(QWidget):
 
         logger.info("Starting BaSiC")
 
-        data = self.layer_select.value.data
-        data = np.moveaxis(data, 0, -1)
-        call_basic(data)
-
         # worker = call_basic(data)
 
         # self.cancel_btn.clicked.connect(partial(self._cancel, worker=worker))
         # worker.finished.connect(self.cancel_btn.clicked.disconnect)
 
         # worker.start()
+
+    # def _get_settings(self):
+    #     layout = self.settings_container.layout()
+    #     settings = {}
+    #     for i in range(layout.count()):
+    #         field = layout.itemAt(i).widget()
+
+    #     return settings
 
     def _cancel(self, worker):
         logger.info("Canceling BasiC")

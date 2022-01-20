@@ -111,8 +111,11 @@ class BasicWidget(QWidget):
         # basic = BaSiC(**self.settings)
         basic = BaSiC()
         corrected = basic.fit_predict(data)
-        flatfield = basic.flatfield
         corrected = np.moveaxis(corrected, -1, 0)
+        flatfield = basic.flatfield
+        if self.settings["get_darkfield"]:
+            darkfield = basic.darkfield
+            self.viewer.add_image(darkfield)
         self.viewer.add_image(flatfield)
         self.viewer.add_image(corrected, **meta)
 

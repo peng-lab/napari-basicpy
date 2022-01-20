@@ -75,7 +75,7 @@ class BasicWidget(QWidget):
                 options={"tooltip": description},
             )
 
-        # all settings will be directed to BaSiC initialization
+        # all settings here will be used to initialize BaSiC
         self._settings = {k: build_widget(k) for k in BaSiC().settings.keys()}
 
         simple_settings_container = QGroupBox("Settings")
@@ -107,40 +107,16 @@ class BasicWidget(QWidget):
         data, meta, _ = self.layer_select.value.as_layer_data_tuple()
         data = np.moveaxis(data, 0, -1)
 
-        basic = BaSiC(**self.settings)
+        # FIXME passing settings breaks BaSiC
+        # basic = BaSiC(**self.settings)
+        basic = BaSiC()
         corrected = basic.fit_predict(data)
+        flatfield = basic.flatfield
         corrected = np.moveaxis(corrected, -1, 0)
+        self.viewer.add_image(flatfield)
         self.viewer.add_image(corrected, **meta)
 
-        # def update_layer(image):
-        #     try:
-        #         self.viewer.layers["result"].data = image
-        #     except KeyError:
-        #         self.viewer.add_image(image, name="result")
-
-        # @thread_worker(
-        #     start_thread=False,
-        #     connect={"yielded": update_layer, "returned": update_layer},
-        # )
-        # def call_basic(data):
-        #     basic = BaSiC(get_darkfield=False)
-        #     corrected = basic(data)
-        #     update_layer(corrected)
-        # fit = basic.fit(image, updates=True)
-        # while True:
-        #     try:
-        #         yield next(fit)
-        #     except StopIteration as final:
-        #         return final.value
-
         logger.info("Starting BaSiC")
-
-        # worker = call_basic(data)
-
-        # self.cancel_btn.clicked.connect(partial(self._cancel, worker=worker))
-        # worker.finished.connect(self.cancel_btn.clicked.disconnect)
-
-        # worker.start()
 
     def _cancel(self, worker):
         logger.info("Canceling BasiC")
@@ -153,13 +129,3 @@ class BasicWidget(QWidget):
     def reset_choices(self, event: Optional[QEvent] = None) -> None:
         """Repopulate image list."""  # noqa DAR101
         self.layer_select.reset_choices(event)
-
-
-# if __name__ == "__main__":
-#     import napari
-
-#     viewer = napari.Viewer()
-#     im = viewer.open_sample("napari-basicpy", "sample_data")[0]
-#     im.colormap = "viridis"
-#     widget = BasicWidget(viewer)
-#     viewer.window.add_dock_widget(widget)

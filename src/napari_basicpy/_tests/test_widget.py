@@ -16,4 +16,4 @@ def test_q_widget(make_napari_viewer):
     assert len(viewer.layers) == 1
 
     widget._run()
-    assert len(viewer.layers) == 2
+    assert len(viewer.layers) >= 2

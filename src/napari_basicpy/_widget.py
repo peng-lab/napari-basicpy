@@ -4,9 +4,9 @@ from functools import partial
 from typing import TYPE_CHECKING, Optional
 
 import numpy as np
+from basicpy import BaSiC
 from magicgui.widgets import create_widget
 from napari.qt import thread_worker
-from pybasic import BaSiC
 from qtpy.QtCore import QEvent
 from qtpy.QtWidgets import QFormLayout, QGroupBox, QPushButton, QVBoxLayout, QWidget
 
@@ -80,6 +80,21 @@ class BasicWidget(QWidget):
         # all settings here will be used to initialize BaSiC
         self._settings = {k: build_widget(k) for k in BaSiC().settings.keys()}
 
+        self._extrasettings = dict()
+        # options to show flatfield/darkfield profiles
+        self._extrasettings["show_flatfield"] = create_widget(
+            value=True,
+            options={"tooltip": "Output flatfield profile with corrected image"},
+        )
+        self._extrasettings["show_darkfield"] = create_widget(
+            value=True,
+            options={"tooltip": "Output darkfield profile with corrected image"},
+        )
+        self._extrasettings["show_timelapse"] = create_widget(
+            value=False,
+            options={"tooltip": "Output timelapse correction with corrected image"},
+        )
+
         simple_settings_container = QGroupBox("Settings")
         simple_settings_container.setLayout(QFormLayout())
         simple_settings_container.layout().setFieldGrowthPolicy(
@@ -98,6 +113,9 @@ class BasicWidget(QWidget):
             else:
                 simple_settings_container.layout().addRow(k, v.native)
 
+        for k, v in self._extrasettings.items():
+            simple_settings_container.layout().addRow(k, v.native)
+
         return simple_settings_container, advanced_settings_container
 
     @property
@@ -110,8 +128,12 @@ class BasicWidget(QWidget):
         data = np.moveaxis(data, 0, -1)
 
         def update_layer(update):
-            data, meta = update
+            data, flatfield, darkfield, meta = update
             self.viewer.add_image(data, **meta)
+            if self._extrasettings["show_flatfield"].value:
+                self.viewer.add_image(flatfield)
+            if self._extrasettings["show_darkfield"].value:
+                self.viewer.add_image(darkfield)
 
         @thread_worker(
             start_thread=False,
@@ -122,14 +144,13 @@ class BasicWidget(QWidget):
             # FIXME passing settings breaks BaSiC
             # basic = BaSiC(**self.settings)
             basic = BaSiC()
-            corrected = basic.fit_predict(data)
+            corrected = basic.fit_transform(data)
             corrected = np.moveaxis(corrected, -1, 0)
-            return corrected, meta
-            # flatfield = basic.flatfield
-            # if self.settings["get_darkfield"]:
-            #     darkfield = basic.darkfield
-            #     self.viewer.add_image(darkfield)
-            # self.viewer.add_image(flatfield)
+
+            flatfield = basic.flatfield
+            darkfield = basic.darkfield
+
+            return corrected, flatfield, darkfield, meta
 
         worker = call_basic(data)
         self.cancel_btn.clicked.connect(partial(self._cancel, worker=worker))

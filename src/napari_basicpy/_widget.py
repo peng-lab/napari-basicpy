@@ -8,7 +8,14 @@ from basicpy import BaSiC
 from magicgui.widgets import create_widget
 from napari.qt import thread_worker
 from qtpy.QtCore import QEvent
-from qtpy.QtWidgets import QFormLayout, QGroupBox, QPushButton, QVBoxLayout, QWidget
+from qtpy.QtWidgets import (
+    QCheckBox,
+    QFormLayout,
+    QGroupBox,
+    QPushButton,
+    QVBoxLayout,
+    QWidget,
+)
 
 if TYPE_CHECKING:
     import napari  # pragma: no cover
@@ -36,6 +43,7 @@ class BasicWidget(QWidget):
         layer_select_container.setLayout(layer_select_layout)
 
         simple_settings, advanced_settings = self._build_settings_containers()
+        self.advanced_settings = advanced_settings
 
         self.run_btn = QPushButton("Run")
         self.run_btn.clicked.connect(self._run)
@@ -43,6 +51,13 @@ class BasicWidget(QWidget):
 
         self.layout().addWidget(layer_select_container)
         self.layout().addWidget(simple_settings)
+
+        # toggle advanced settings visibility
+        self.toggle_ckbx = QCheckBox("Show Advanced Settings")
+        self.layout().addWidget(self.toggle_ckbx)
+        self.toggle_ckbx.stateChanged.connect(self.toggle_advanced_settings)
+        self.advanced_settings.setVisible(False)
+
         self.layout().addWidget(advanced_settings)
         self.layout().addWidget(self.run_btn)
         self.layout().addWidget(self.cancel_btn)
@@ -50,13 +65,24 @@ class BasicWidget(QWidget):
     def _build_settings_containers(self):
         advanced = [
             "epsilon",
-            "lambda_darkfield",
-            "lambda_flatfield",
             "estimation_mode",
+            "fitting_mode",
+            "lambda_darkfield_coef",
+            "lambda_darkfield_sparse_coef",
+            "lambda_darkfield",
+            "lambda_flatfield_coef",
+            "lambda_flatfield",
             "max_iterations",
+            "max_mu_coef",
+            "max_reweight_iterations_baseline",
             "max_reweight_iterations",
+            "mu_coef",
+            "optimization_tol_diff",
             "optimization_tol",
+            "resize_method",
             "reweighting_tol",
+            "rho",
+            "sort_intensity",
             "varying_coeff",
         ]
 
@@ -65,11 +91,14 @@ class BasicWidget(QWidget):
             default = field.default
             description = field.field_info.description
             type_ = field.type_
-            if issubclass(type_, enum.Enum):
-                try:
-                    default = type_[default]
-                except KeyError:
-                    default = default
+            try:
+                if issubclass(type_, enum.Enum):
+                    try:
+                        default = type_[default]
+                    except KeyError:
+                        default = default
+            except TypeError:
+                pass
             # name = field.name
             return create_widget(
                 value=default,
@@ -120,6 +149,7 @@ class BasicWidget(QWidget):
 
     @property
     def settings(self):
+        """Get settings for BaSiC."""
         return {k: v.value for k, v in self._settings.items()}
 
     def _run(self):
@@ -141,9 +171,7 @@ class BasicWidget(QWidget):
             connect={"returned": update_layer},
         )
         def call_basic(data):
-            # FIXME passing settings breaks BaSiC
-            # basic = BaSiC(**self.settings)
-            basic = BaSiC()
+            basic = BaSiC(**self.settings)
             corrected = basic.fit_transform(data)
             corrected = np.moveaxis(corrected, -1, 0)
 
@@ -168,3 +196,11 @@ class BasicWidget(QWidget):
     def reset_choices(self, event: Optional[QEvent] = None) -> None:
         """Repopulate image list."""  # noqa DAR101
         self.layer_select.reset_choices(event)
+
+    def toggle_advanced_settings(self) -> None:
+        """Toggle the advanced settings container."""
+        container = self.advanced_settings
+        if self.toggle_ckbx.isChecked():
+            container.setHidden(False)
+        else:
+            container.setHidden(True)

@@ -15,5 +15,11 @@ def test_q_widget(make_napari_viewer):
     viewer.open_sample("napari-basicpy", "sample_data")
     assert len(viewer.layers) == 1
 
-    widget._run()
-    assert len(viewer.layers) >= 2
+    worker = widget._run()
+
+    while True:
+        if worker.is_running:
+            continue
+        else:
+            assert len(viewer.layers) >= 2
+            break

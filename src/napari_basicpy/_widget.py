@@ -3,7 +3,6 @@ import logging
 from functools import partial
 from typing import TYPE_CHECKING, Optional
 
-import numpy as np
 from basicpy import BaSiC
 from magicgui.widgets import create_widget
 from napari.qt import thread_worker
@@ -13,6 +12,7 @@ from qtpy.QtWidgets import (
     QFormLayout,
     QGroupBox,
     QPushButton,
+    QScrollArea,
     QVBoxLayout,
     QWidget,
 )
@@ -49,24 +49,32 @@ class BasicWidget(QWidget):
         self.run_btn.clicked.connect(self._run)
         self.cancel_btn = QPushButton("Cancel")
 
+        # TODO add BaSiC header
+
         self.layout().addWidget(layer_select_container)
         self.layout().addWidget(simple_settings)
 
         # toggle advanced settings visibility
-        self.toggle_ckbx = QCheckBox("Show Advanced Settings")
-        self.layout().addWidget(self.toggle_ckbx)
-        self.toggle_ckbx.stateChanged.connect(self.toggle_advanced_settings)
-        self.advanced_settings.setVisible(False)
+        self.toggle_advanced_cb = QCheckBox("Show Advanced Settings")
+        self.layout().addWidget(self.toggle_advanced_cb)
+        self.toggle_advanced_cb.stateChanged.connect(self.toggle_advanced_settings)
 
-        self.layout().addWidget(advanced_settings)
+        self.scrollArea = QScrollArea()
+        self.scrollArea.setWidget(self.advanced_settings)
+        self.scrollArea.setVisible(False)
+
+        self.layout().addWidget(self.scrollArea)
+        # self.advanced_settings.setVisible(False)
+        # self.layout().addWidget(advanced_settings)
         self.layout().addWidget(self.run_btn)
         self.layout().addWidget(self.cancel_btn)
 
     def _build_settings_containers(self):
         advanced = [
+            # "get_darkfield",
             "epsilon",
             "estimation_mode",
-            "fitting_mode",
+            # "fitting_mode",
             "lambda_darkfield_coef",
             "lambda_darkfield_sparse_coef",
             "lambda_darkfield",
@@ -84,6 +92,7 @@ class BasicWidget(QWidget):
             "rho",
             "sort_intensity",
             "varying_coeff",
+            "working_size",
         ]
 
         def build_widget(k):
@@ -110,6 +119,7 @@ class BasicWidget(QWidget):
         self._settings = {k: build_widget(k) for k in BaSiC().settings.keys()}
 
         self._extrasettings = dict()
+        # settings to display correction profiles
         # options to show flatfield/darkfield profiles
         self._extrasettings["show_flatfield"] = create_widget(
             value=True,
@@ -142,8 +152,8 @@ class BasicWidget(QWidget):
             else:
                 simple_settings_container.layout().addRow(k, v.native)
 
-        for k, v in self._extrasettings.items():
-            simple_settings_container.layout().addRow(k, v.native)
+        # for k, v in self._extrasettings.items():
+        #     simple_settings_container.layout().addRow(k, v.native)
 
         return simple_settings_container, advanced_settings_container
 
@@ -154,15 +164,21 @@ class BasicWidget(QWidget):
 
     def _run(self):
 
+        # TODO visualization (on button?) to represent that program is running
+        # disable run button
+        self.run_btn.setDisabled(True)
+
         data, meta, _ = self.layer_select.value.as_layer_data_tuple()
-        data = np.moveaxis(data, 0, -1)
 
         def update_layer(update):
             data, flatfield, darkfield, meta = update
             self.viewer.add_image(data, **meta)
             if self._extrasettings["show_flatfield"].value:
                 self.viewer.add_image(flatfield)
-            if self._extrasettings["show_darkfield"].value:
+            if (
+                self._extrasettings["show_darkfield"].value
+                and self._settings["get_darkfield"].value
+            ):
                 self.viewer.add_image(darkfield)
 
         @thread_worker(
@@ -171,12 +187,16 @@ class BasicWidget(QWidget):
             connect={"returned": update_layer},
         )
         def call_basic(data):
+            # TODO log basic output to a QtTextEdit or in a new window
+
             basic = BaSiC(**self.settings)
             corrected = basic.fit_transform(data)
-            corrected = np.moveaxis(corrected, -1, 0)
 
             flatfield = basic.flatfield
             darkfield = basic.darkfield
+
+            # reenable run button
+            self.run_btn.setDisabled(False)
 
             return corrected, flatfield, darkfield, meta
 
@@ -184,10 +204,13 @@ class BasicWidget(QWidget):
         self.cancel_btn.clicked.connect(partial(self._cancel, worker=worker))
         worker.finished.connect(self.cancel_btn.clicked.disconnect)
         worker.start()
+        return worker
 
     def _cancel(self, worker):
         logger.info("Canceling BasiC")
         worker.quit()
+        # enable run button
+        worker.finished.connect(lambda: self.run_btn.setDisabled(False))
 
     def showEvent(self, event: QEvent) -> None:  # noqa: D102
         super().showEvent(event)
@@ -199,8 +222,12 @@ class BasicWidget(QWidget):
 
     def toggle_advanced_settings(self) -> None:
         """Toggle the advanced settings container."""
-        container = self.advanced_settings
-        if self.toggle_ckbx.isChecked():
+        # container = self.advanced_settings
+        container = self.scrollArea
+        if self.toggle_advanced_cb.isChecked():
             container.setHidden(False)
         else:
             container.setHidden(True)
+
+    def build_header(self):
+        ...

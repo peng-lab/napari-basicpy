@@ -1,12 +1,14 @@
 import enum
 import logging
 from functools import partial
+from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
 from basicpy import BaSiC
 from magicgui.widgets import create_widget
 from napari.qt import thread_worker
-from qtpy.QtCore import QEvent
+from qtpy.QtCore import QEvent, Qt
+from qtpy.QtGui import QPixmap
 from qtpy.QtWidgets import (
     QCheckBox,
     QFormLayout,
@@ -50,8 +52,10 @@ class BasicWidget(QWidget):
         self.run_btn.clicked.connect(self._run)
         self.cancel_btn = QPushButton("Cancel")
 
+        # header
         header = self.build_header()
         self.layout().addWidget(header)
+
         self.layout().addWidget(layer_select_container)
         self.layout().addWidget(simple_settings)
 
@@ -250,5 +254,18 @@ class BasicWidget(QWidget):
     def build_header(self):
         """Build a header."""
         # TODO spice up the header, maybe add logo
-        header = QLabel("BaSiC Shading Correction Plugin")
+
+        logo_path = Path(__file__).parent / "_icons/logo.png"
+        logo_pm = QPixmap(str(logo_path.absolute()))
+        logo_lbl = QLabel()
+        logo_lbl.setPixmap(logo_pm)
+        logo_lbl.setAlignment(Qt.AlignCenter)
+        lbl = QLabel("<b>BaSiC Shading Correction</b>")
+        lbl.setAlignment(Qt.AlignCenter)
+
+        header = QWidget()
+        header.setLayout(QVBoxLayout())
+        header.layout().addWidget(logo_lbl)
+        header.layout().addWidget(lbl)
+
         return header

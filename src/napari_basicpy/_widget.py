@@ -11,6 +11,7 @@ from qtpy.QtWidgets import (
     QCheckBox,
     QFormLayout,
     QGroupBox,
+    QLabel,
     QPushButton,
     QScrollArea,
     QVBoxLayout,
@@ -49,32 +50,35 @@ class BasicWidget(QWidget):
         self.run_btn.clicked.connect(self._run)
         self.cancel_btn = QPushButton("Cancel")
 
-        # TODO add BaSiC header
-
+        header = self.build_header()
+        self.layout().addWidget(header)
         self.layout().addWidget(layer_select_container)
         self.layout().addWidget(simple_settings)
 
         # toggle advanced settings visibility
         self.toggle_advanced_cb = QCheckBox("Show Advanced Settings")
+        tb_doc_reference = QLabel()
+        tb_doc_reference.setOpenExternalLinks(True)
+        tb_doc_reference.setText(
+            '<a href="https://basicpy-rtd.readthedocs.io/en/latest/">'
+            "See docs for settings details</a>"
+        )
+        self.layout().addWidget(tb_doc_reference)
+
         self.layout().addWidget(self.toggle_advanced_cb)
         self.toggle_advanced_cb.stateChanged.connect(self.toggle_advanced_settings)
 
-        self.scrollArea = QScrollArea()
-        self.scrollArea.setWidget(self.advanced_settings)
-        self.scrollArea.setVisible(False)
-
-        self.layout().addWidget(self.scrollArea)
-        # self.advanced_settings.setVisible(False)
-        # self.layout().addWidget(advanced_settings)
+        self.advanced_settings.setVisible(False)
+        self.layout().addWidget(advanced_settings)
         self.layout().addWidget(self.run_btn)
         self.layout().addWidget(self.cancel_btn)
 
     def _build_settings_containers(self):
         advanced = [
-            # "get_darkfield",
             "epsilon",
             "estimation_mode",
             # "fitting_mode",
+            # "get_darkfield",
             "lambda_darkfield_coef",
             "lambda_darkfield_sparse_coef",
             "lambda_darkfield",
@@ -140,18 +144,28 @@ class BasicWidget(QWidget):
             QFormLayout.AllNonFixedFieldsGrow
         )
 
-        advanced_settings_container = QGroupBox("Advanced Settings")
-        advanced_settings_container.setLayout(QFormLayout())
-        advanced_settings_container.layout().setFieldGrowthPolicy(
+        # this mess is to put scrollArea INSIDE groupBox
+        advanced_settings_list = QWidget()
+        advanced_settings_list.setLayout(QFormLayout())
+        advanced_settings_list.layout().setFieldGrowthPolicy(
             QFormLayout.AllNonFixedFieldsGrow
         )
 
         for k, v in self._settings.items():
             if k in advanced:
-                advanced_settings_container.layout().addRow(k, v.native)
+                # advanced_settings_container.layout().addRow(k, v.native)
+                advanced_settings_list.layout().addRow(k, v.native)
             else:
                 simple_settings_container.layout().addRow(k, v.native)
 
+        advanced_settings_scroll = QScrollArea()
+        advanced_settings_scroll.setWidget(advanced_settings_list)
+
+        advanced_settings_container = QGroupBox("Advanced Settings")
+        advanced_settings_container.setLayout(QVBoxLayout())
+        advanced_settings_container.layout().addWidget(advanced_settings_scroll)
+
+        # NOTE uncomment to add "show flatfield, ..." options
         # for k, v in self._extrasettings.items():
         #     simple_settings_container.layout().addRow(k, v.native)
 
@@ -219,15 +233,22 @@ class BasicWidget(QWidget):
     def reset_choices(self, event: Optional[QEvent] = None) -> None:
         """Repopulate image list."""  # noqa DAR101
         self.layer_select.reset_choices(event)
+        if len(self.layer_select) < 1:
+            self.run_btn.setEnabled(False)
+        else:
+            self.run_btn.setEnabled(True)
 
     def toggle_advanced_settings(self) -> None:
         """Toggle the advanced settings container."""
         # container = self.advanced_settings
-        container = self.scrollArea
+        container = self.advanced_settings
         if self.toggle_advanced_cb.isChecked():
             container.setHidden(False)
         else:
             container.setHidden(True)
 
     def build_header(self):
-        ...
+        """Build a header."""
+        # TODO spice up the header, maybe add logo
+        header = QLabel("BaSiC Shading Correction Plugin")
+        return header

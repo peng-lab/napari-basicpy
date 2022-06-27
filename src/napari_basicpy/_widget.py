@@ -117,11 +117,17 @@ class BasicWidget(QWidget):
             except TypeError:
                 pass
             # name = field.name
-            return create_widget(
+            widget = create_widget(
                 value=default,
                 annotation=type_,
                 options={"tooltip": description},
             )
+
+            if type(default) == float and default < 0.01:
+                widget.native.setDecimals(8)
+                widget.native.setValue(default)
+
+            return widget
 
         # all settings here will be used to initialize BaSiC
         self._settings = {k: build_widget(k) for k in BaSiC().settings.keys()}
@@ -129,15 +135,15 @@ class BasicWidget(QWidget):
         self._extrasettings = dict()
         # settings to display correction profiles
         # options to show flatfield/darkfield profiles
-        self._extrasettings["show_flatfield"] = create_widget(
-            value=True,
-            options={"tooltip": "Output flatfield profile with corrected image"},
-        )
-        self._extrasettings["show_darkfield"] = create_widget(
-            value=True,
-            options={"tooltip": "Output darkfield profile with corrected image"},
-        )
-        self._extrasettings["show_timelapse"] = create_widget(
+        # self._extrasettings["show_flatfield"] = create_widget(
+        #     value=True,
+        #     options={"tooltip": "Output flatfield profile with corrected image"},
+        # )
+        # self._extrasettings["show_darkfield"] = create_widget(
+        #     value=True,
+        #     options={"tooltip": "Output darkfield profile with corrected image"},
+        # )
+        self._extrasettings["get_timelapse"] = create_widget(
             value=False,
             options={"tooltip": "Output timelapse correction with corrected image"},
         )
@@ -170,8 +176,8 @@ class BasicWidget(QWidget):
         advanced_settings_container.layout().addWidget(advanced_settings_scroll)
 
         # NOTE uncomment to add "show flatfield, ..." options
-        # for k, v in self._extrasettings.items():
-        #     simple_settings_container.layout().addRow(k, v.native)
+        for k, v in self._extrasettings.items():
+            simple_settings_container.layout().addRow(k, v.native)
 
         return simple_settings_container, advanced_settings_container
 
@@ -189,15 +195,14 @@ class BasicWidget(QWidget):
         data, meta, _ = self.layer_select.value.as_layer_data_tuple()
 
         def update_layer(update):
-            data, flatfield, darkfield, meta = update
+            data, flatfield, darkfield, baseline, meta = update
+            print(f"corrected shape: {data.shape}")
             self.viewer.add_image(data, **meta)
-            if self._extrasettings["show_flatfield"].value:
-                self.viewer.add_image(flatfield)
-            if (
-                self._extrasettings["show_darkfield"].value
-                and self._settings["get_darkfield"].value
-            ):
+            self.viewer.add_image(flatfield)
+            if self._settings["get_darkfield"].value:
                 self.viewer.add_image(darkfield)
+            if self._extrasettings["get_timelapse"].value:
+                self.viewer.add_image(baseline)
 
         @thread_worker(
             start_thread=False,
@@ -208,15 +213,19 @@ class BasicWidget(QWidget):
             # TODO log basic output to a QtTextEdit or in a new window
 
             basic = BaSiC(**self.settings)
-            corrected = basic.fit_transform(data)
+            corrected = basic.fit_transform(
+                data, timelapse=self._extrasettings["get_timelapse"]
+            )
 
             flatfield = basic.flatfield
             darkfield = basic.darkfield
+            baseline = basic.baseline
 
             # reenable run button
+            # TODO also reenable when error occurs
             self.run_btn.setDisabled(False)
 
-            return corrected, flatfield, darkfield, meta
+            return corrected, flatfield, darkfield, baseline, meta
 
         worker = call_basic(data)
         self.cancel_btn.clicked.connect(partial(self._cancel, worker=worker))

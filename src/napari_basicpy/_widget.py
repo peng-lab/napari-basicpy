@@ -4,13 +4,15 @@ from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
 
+import numpy as np
 from basicpy import BaSiC
 from magicgui.widgets import create_widget
 from napari.qt import thread_worker
 from qtpy.QtCore import QEvent, Qt
-from qtpy.QtGui import QPixmap
+from qtpy.QtGui import QDoubleValidator, QPixmap
 from qtpy.QtWidgets import (
     QCheckBox,
+    QDoubleSpinBox,
     QFormLayout,
     QGroupBox,
     QLabel,
@@ -117,15 +119,19 @@ class BasicWidget(QWidget):
             except TypeError:
                 pass
             # name = field.name
-            widget = create_widget(
-                value=default,
-                annotation=type_,
-                options={"tooltip": description},
-            )
 
-            if type(default) == float and default < 0.01:
-                widget.native.setDecimals(8)
+            if (type(default) == float or type(default) == int) and (
+                default < 0.01 or default > 999
+            ):
+                widget = ScientificDoubleSpinBox()
                 widget.native.setValue(default)
+                widget.native.adjustSize()
+            else:
+                widget = create_widget(
+                    value=default,
+                    annotation=type_,
+                    options={"tooltip": description},
+                )
 
             return widget
 
@@ -175,7 +181,6 @@ class BasicWidget(QWidget):
         advanced_settings_container.setLayout(QVBoxLayout())
         advanced_settings_container.layout().addWidget(advanced_settings_scroll)
 
-        # NOTE uncomment to add "show flatfield, ..." options
         for k, v in self._extrasettings.items():
             simple_settings_container.layout().addRow(k, v.native)
 
@@ -278,3 +283,31 @@ class BasicWidget(QWidget):
         header.layout().addWidget(lbl)
 
         return header
+
+
+class QScientificDoubleSpinBox(QDoubleSpinBox):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.validator = QDoubleValidator()
+        self.validator.setNotation(QDoubleValidator.ScientificNotation)
+        self.setDecimals(10)
+        self.setMinimum(-np.inf)
+        self.setMaximum(np.inf)
+
+    def validate(self, text, pos):
+        return self.validator.validate(text, pos)
+
+    def fixup(self, text):
+        return self.validator.fixup(text)
+
+    def textFromValue(self, value):
+        return f"{value:.2E}"
+
+
+class ScientificDoubleSpinBox:
+    def __init__(self, *args, **kwargs):
+        self.native = QScientificDoubleSpinBox(*args, **kwargs)
+
+    @property
+    def value(self):
+        return self.native.value()

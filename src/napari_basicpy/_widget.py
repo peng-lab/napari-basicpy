@@ -133,6 +133,7 @@ class BasicWidget(QWidget):
                     options={"tooltip": description},
                 )
 
+            widget.native.setMinimumWidth(150)
             return widget
 
         # all settings here will be used to initialize BaSiC
@@ -286,7 +287,10 @@ class BasicWidget(QWidget):
 
 
 class QScientificDoubleSpinBox(QDoubleSpinBox):
+    """QDoubleSpinBox with scientific notation."""
+
     def __init__(self, *args, **kwargs):
+        """Initialize a QDoubleSpinBox for scientific notation input."""
         super().__init__(*args, **kwargs)
         self.validator = QDoubleValidator()
         self.validator.setNotation(QDoubleValidator.ScientificNotation)
@@ -294,20 +298,24 @@ class QScientificDoubleSpinBox(QDoubleSpinBox):
         self.setMinimum(-np.inf)
         self.setMaximum(np.inf)
 
-    def validate(self, text, pos):
+    def validate(self, text, pos):  # noqa: D102
         return self.validator.validate(text, pos)
 
-    def fixup(self, text):
+    def fixup(self, text):  # noqa: D102
         return self.validator.fixup(text)
 
-    def textFromValue(self, value):
+    def textFromValue(self, value):  # noqa: D102
         return f"{value:.2E}"
 
 
 class ScientificDoubleSpinBox:
+    """Widget for inputing scientific notation."""
+
     def __init__(self, *args, **kwargs):
+        """Initialize a scientific spinbox widget."""
         self.native = QScientificDoubleSpinBox(*args, **kwargs)
 
     @property
     def value(self):
+        """Return the current value of the widget."""
         return self.native.value()

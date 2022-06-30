@@ -66,7 +66,7 @@ class BasicWidget(QWidget):
         tb_doc_reference = QLabel()
         tb_doc_reference.setOpenExternalLinks(True)
         tb_doc_reference.setText(
-            '<a href="https://basicpy-rtd.readthedocs.io/en/latest/">'
+            '<a href="https://basicpy.readthedocs.io/en/latest/">'
             "See docs for settings details</a>"
         )
         self.layout().addWidget(tb_doc_reference)

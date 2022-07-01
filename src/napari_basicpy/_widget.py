@@ -137,7 +137,12 @@ class BasicWidget(QWidget):
             return widget
 
         # all settings here will be used to initialize BaSiC
-        self._settings = {k: build_widget(k) for k in BaSiC().settings.keys()}
+        self._settings = {
+            k: build_widget(k)
+            for k in BaSiC().settings.keys()
+            # exclude settings
+            if k not in ["working_size"]
+        }
 
         self._extrasettings = dict()
         # settings to display correction profiles

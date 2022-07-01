@@ -222,30 +222,38 @@ class BasicWidget(QWidget):
         )
         def call_basic(data):
             # TODO log basic output to a QtTextEdit or in a new window
-
             basic = BaSiC(**self.settings)
+            logger.info(
+                "Calling `basic.fit_transform` with `get_timelapse="
+                f"{self._extrasettings['get_timelapse'].value}`"
+            )
             corrected = basic.fit_transform(
-                data, timelapse=self._extrasettings["get_timelapse"]
+                data, timelapse=self._extrasettings["get_timelapse"].value
             )
 
             flatfield = basic.flatfield
             darkfield = basic.darkfield
-            baseline = basic.baseline
+
+            if self._extrasettings["get_timelapse"]:
+                # flatfield = flatfield / basic.baseline
+                ...
 
             # reenable run button
             # TODO also reenable when error occurs
             self.run_btn.setDisabled(False)
 
-            return corrected, flatfield, darkfield, baseline, meta
+            return corrected, flatfield, darkfield, meta
 
+        # TODO trigger error when BaSiC fails, re-enable "run" button
         worker = call_basic(data)
         self.cancel_btn.clicked.connect(partial(self._cancel, worker=worker))
         worker.finished.connect(self.cancel_btn.clicked.disconnect)
+        worker.errored.connect(lambda: self.run_btn.setDisabled(False))
         worker.start()
         return worker
 
     def _cancel(self, worker):
-        logger.info("Canceling BasiC")
+        logger.info("Cancel requested")
         worker.quit()
         # enable run button
         worker.finished.connect(lambda: self.run_btn.setDisabled(False))

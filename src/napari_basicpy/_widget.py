@@ -283,7 +283,6 @@ class BasicWidget(QWidget):
 
     def build_header(self):
         """Build a header."""
-        # TODO spice up the header, maybe add logo
 
         logo_path = Path(__file__).parent / "_icons/logo.png"
         logo_pm = QPixmap(str(logo_path.absolute()))

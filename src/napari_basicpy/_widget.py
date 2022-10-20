@@ -1,5 +1,6 @@
 import enum
 import logging
+import pkg_resources
 from functools import partial
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional
@@ -27,6 +28,7 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+BASICPY_VERSION = pkg_resources.get_distribution("BaSiCPy").version
 
 class BasicWidget(QWidget):
     """Example widget class."""
@@ -288,7 +290,7 @@ class BasicWidget(QWidget):
         logo_lbl = QLabel()
         logo_lbl.setPixmap(logo_pm)
         logo_lbl.setAlignment(Qt.AlignCenter)
-        lbl = QLabel("<b>BaSiC Shading Correction</b>")
+        lbl = QLabel(f"<b>BaSiC Shading Correction</b> v{BASICPY_VERSION}")
         lbl.setAlignment(Qt.AlignCenter)
 
         header = QWidget()

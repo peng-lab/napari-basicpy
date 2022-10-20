@@ -208,14 +208,15 @@ class BasicWidget(QWidget):
         data, meta, _ = self.layer_select.value.as_layer_data_tuple()
 
         def update_layer(update):
-            data, flatfield, darkfield, baseline, meta = update
+            # data, flatfield, darkfield, baseline, meta = update
+            data, flatfield, darkfield, meta = update
             print(f"corrected shape: {data.shape}")
             self.viewer.add_image(data, **meta)
             self.viewer.add_image(flatfield)
             if self._settings["get_darkfield"].value:
                 self.viewer.add_image(darkfield)
-            if self._extrasettings["get_timelapse"].value:
-                self.viewer.add_image(baseline)
+            # if self._extrasettings["get_timelapse"].value:
+            #     self.viewer.add_image(baseline)
 
         @thread_worker(
             start_thread=False,

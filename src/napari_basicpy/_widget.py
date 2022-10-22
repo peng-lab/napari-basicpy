@@ -68,7 +68,7 @@ class BasicWidget(QWidget):
         tb_doc_reference = QLabel()
         tb_doc_reference.setOpenExternalLinks(True)
         tb_doc_reference.setText(
-            '<a href="https://basicpy.readthedocs.io/en/latest/api.html">'
+            '<a href="https://basicpy.readthedocs.io/en/latest/api.html#basicpy.basicpy.BaSiC">'
             "See docs for settings details</a>"
         )
         self.layout().addWidget(tb_doc_reference)
@@ -85,8 +85,7 @@ class BasicWidget(QWidget):
         advanced = [
             "epsilon",
             "estimation_mode",
-            # "fitting_mode",
-            # "get_darkfield",
+            "fitting_mode",
             "lambda_darkfield_coef",
             "lambda_darkfield_sparse_coef",
             "lambda_darkfield",
@@ -99,12 +98,14 @@ class BasicWidget(QWidget):
             "mu_coef",
             "optimization_tol_diff",
             "optimization_tol",
-            "resize_method",
+            "resize_mode",
+            "resize_params",
             "reweighting_tol",
             "rho",
             "sort_intensity",
             "varying_coeff",
             "working_size",
+            # "get_darkfield",
         ]
 
         def build_widget(k):

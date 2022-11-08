@@ -1,6 +1,7 @@
 """Test sample data."""
+import pytest
 
-
+@pytest.mark.skip(reason="broken on backend")
 def test_data(make_napari_viewer):
     samples = [
         "sample_data_random",

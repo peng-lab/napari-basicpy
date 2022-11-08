@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING, List
 
-import basicpy.data
+import basicpy.datasets
 import numpy as np
 
 if TYPE_CHECKING:
@@ -35,25 +35,25 @@ def make_sample_data_random() -> List[napari.types.LayerData]:
 
 
 def make_sample_data_cell_culture() -> List[napari.types.LayerData]:
-    data = basicpy.data.cell_culture()
+    data = basicpy.datasets.cell_culture()
     return [(data, {"name": "Cell Culture"}, "image")]
 
 
 def make_sample_data_timelapse_brightfield() -> List[napari.types.LayerData]:
-    data = basicpy.data.timelapse_brightfield()
+    data = basicpy.datasets.timelapse_brightfield()
     return [(data, {"name": "Timelapse Brightfield"}, "image")]
 
 
 def make_sample_data_timelapse_nanog() -> List[napari.types.LayerData]:
-    data = basicpy.data.timelapse_nanog()
+    data = basicpy.datasets.timelapse_nanog()
     return [(data, {"name": "Timelapse Nanog"}, "image")]
 
 
 def make_sample_data_timelapse_pu1() -> List[napari.types.LayerData]:
-    data = basicpy.data.timelapse_pu1()
+    data = basicpy.datasets.timelapse_pu1()
     return [(data, {"name": "Timelapse Pu1"}, "image")]
 
 
 def make_sample_data_wsi_brain():
-    data = basicpy.data.wsi_brain()
+    data = basicpy.datasets.wsi_brain()
     return [(data, {"name": "WSI Brain"}, "image")]

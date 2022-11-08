@@ -30,6 +30,7 @@ logger = logging.getLogger(__name__)
 
 BASICPY_VERSION = pkg_resources.get_distribution("BaSiCPy").version
 
+
 class BasicWidget(QWidget):
     """Example widget class."""
 
@@ -82,6 +83,12 @@ class BasicWidget(QWidget):
         self.layout().addWidget(self.cancel_btn)
 
     def _build_settings_containers(self):
+        skip = [
+            "resize_mode",
+            "resize_params",
+            "working_size",
+        ]
+
         advanced = [
             "epsilon",
             "estimation_mode",
@@ -144,7 +151,7 @@ class BasicWidget(QWidget):
             k: build_widget(k)
             for k in BaSiC().settings.keys()
             # exclude settings
-            if k not in ["working_size"]
+            if k not in skip
         }
 
         self._extrasettings = dict()

@@ -1,4 +1,0 @@
-[flake8]
-exclude =
-    src/napari_basicpy/_mock_basic.py
-max_line_length = 88

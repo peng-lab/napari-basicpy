@@ -2,10 +2,49 @@ name: napari-basicpy
 display_name: BaSiCpy shadow correction in napari
 schema_version: 0.1.0
 contributions:
-  commands: 
-  - id: napari-basicpy.shadow_correction
-    title: Apply BaSiC Shadow Correction
-    python_name: napari_basicpy._dock_widget:BasicWidget
+  commands:
+    - id: napari-basicpy.shadow_correction
+      title: Apply BaSiC Shadow Correction
+      python_name: napari_basicpy._widget:BasicWidget
+    - id: napari-basicpy.sample_data_random
+      title: Provide artifical sample data
+      python_name: napari_basicpy._sample_data:make_sample_data_random
+    - id: napari-basicpy.sample_data_cell_culture
+      title: Provide artifical example
+      python_name: napari_basicpy._sample_data:make_sample_data_cell_culture
+    - id: napari-basicpy.sample_data_timelapse_brightfield
+      title: Provide artifical example
+      python_name: napari_basicpy._sample_data:make_sample_data_timelapse_brightfield
+    - id: napari-basicpy.sample_data_timelapse_nanog
+      title: Provide artifical example
+      python_name: napari_basicpy._sample_data:make_sample_data_timelapse_nanog
+    - id: napari-basicpy.sample_data_timelapse_pu1
+      title: Provide artifical example
+      python_name: napari_basicpy._sample_data:make_sample_data_timelapse_pu1
+    - id: napari-basicpy.sample_data_wsi_brain
+      title: Provide artifical example
+      python_name: napari_basicpy._sample_data:make_sample_data_wsi_brain
+
   widgets:
-  - command: napari-basicpy.shadow_correction
-    display_name: BaSiC Shadow Correction
+    - command: napari-basicpy.shadow_correction
+      display_name: BaSiC Shadow Correction
+
+  sample_data:
+    - key: sample_data_random
+      display_name: Random
+      command: napari-basicpy.sample_data_random
+    - key: sample_data_cell_culture
+      display_name: Cell Culture
+      command: napari-basicpy.sample_data_cell_culture
+    - key: sample_data_timelapse_brightfield
+      display_name: Timelapse Brightfield
+      command: napari-basicpy.sample_data_timelapse_brightfield
+    - key: sample_data_timelapse_nanog
+      display_name: Timelapse Nanog
+      command: napari-basicpy.sample_data_timelapse_nanog
+    - key: sample_data_timelapse_pu1
+      display_name: Timelapse Pu1
+      command: napari-basicpy.sample_data_timelapse_pu1
+    - key: sample_data_wsi_brain
+      display_name: WSI Brain
+      command: napari-basicpy.sample_data_wsi_brain

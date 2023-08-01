@@ -27,6 +27,8 @@ https://napari.org/plugins/stable/index.html
 
 ## Installation
 
+**Important note** M1/M2 mac and Windows users may need to install the `jax` and `jaxlib` following the instruction [here](https://github.com/peng-lab/BaSiCPy#installation).
+
 You can install `napari-basicpy` via [pip]:
 
     pip install napari-basicpy
@@ -36,7 +38,6 @@ You can install `napari-basicpy` via [pip]:
 To install latest development version :
 
     pip install git+https://github.com/tdmorello/napari-basicpy.git
-
 
 ## Contributing
 

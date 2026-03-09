@@ -1,14 +1,7 @@
-"""Testing functions."""
+from napari_basicpy._widget import BasicWidget
 
 
-from time import sleep
-
-from napari_basicpy import BasicWidget
-
-
-# NOTE this test depends on `make_sample_data` working, might be bad design
-# alternative, get pytest fixture from BaSiCPy package and use here
-def test_q_widget(make_napari_viewer):
+def test_q_widget(make_napari_viewer, qtbot):
     viewer = make_napari_viewer()
 
     widget = BasicWidget(viewer)
@@ -17,12 +10,15 @@ def test_q_widget(make_napari_viewer):
     viewer.open_sample("napari-basicpy", "sample_data_random")
     assert len(viewer.layers) == 1
 
-    worker = widget._run()
-    sleep(1)
+    widget.reset_choices()
+    widget.fit_image_select.value = viewer.layers[0]
 
-    while True:
-        if worker.is_running:
-            continue
-        else:
-            # assert len(viewer.layers) >= 2
-            break
+    worker = widget._run_fit()
+    assert worker is not None
+
+    with qtbot.waitSignal(worker.finished, timeout=60000):
+        pass
+
+    layer_names = [layer.name for layer in viewer.layers]
+    assert "corrected" in layer_names
+    assert "flatfield" in layer_names

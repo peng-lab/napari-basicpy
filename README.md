@@ -1,10 +1,10 @@
 # napari-basicpy
 
-[![License](https://img.shields.io/pypi/l/napari-basicpy.svg?color=green)](https://github.com/tdmorello/napari-basicpy/raw/main/LICENSE)
+[![License](https://img.shields.io/pypi/l/napari-basicpy.svg?color=green)](https://github.com/peng-lab/napari-basicpy/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-basicpy.svg?color=green)](https://pypi.org/project/napari-basicpy)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-basicpy.svg?color=green)](https://python.org)
-[![tests](https://github.com/tdmorello/napari-basicpy/workflows/tests/badge.svg)](https://github.com/tdmorello/napari-basicpy/actions)
-[![codecov](https://codecov.io/gh/tdmorello/napari-basicpy/branch/main/graph/badge.svg)](https://codecov.io/gh/tdmorello/napari-basicpy)
+[![tests](https://github.com/peng-lab/napari-basicpy/workflows/tests/badge.svg)](https://github.com/peng-lab/napari-basicpy/actions)
+[![codecov](https://codecov.io/ghpeng-lab/napari-basicpy/branch/main/graph/badge.svg)](https://codecov.io/gh/peng-lab/napari-basicpy)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-basicpy)](https://napari-hub.org/plugins/napari-basicpy)
 
 BaSiCPy illumination correction for napari
@@ -27,17 +27,19 @@ https://napari.org/plugins/stable/index.html
 
 ## Installation
 
-**Important note** M1/M2 mac and Windows users may need to install the `jax` and `jaxlib` following the instruction [here](https://github.com/peng-lab/BaSiCPy#installation).
-
 You can install `napari-basicpy` via [pip]:
 
     pip install napari-basicpy
 
+### Compatibility
 
+`napari-basicpy` (>=1.0.0) requires **BaSiCPy ≥ 2.0**.
+
+If you need compatibility with **BaSiCPy < 2.0**, please use an earlier plugin version:
 
 To install latest development version :
 
-    pip install git+https://github.com/tdmorello/napari-basicpy.git
+    pip install git+https://github.com/peng-lab/napari-basicpy.git
 
 ## Contributing
 
@@ -64,7 +66,7 @@ If you encounter any problems, please [file an issue] along with a detailed desc
 [Mozilla Public License 2.0]: https://www.mozilla.org/media/MPL/2.0/index.txt
 [cookiecutter-napari-plugin]: https://github.com/napari/cookiecutter-napari-plugin
 
-[file an issue]: https://github.com/tdmorello/napari-basicpy/issues
+[file an issue]: https://github.com/peng-lab/napari-basicpy/issues
 
 [napari]: https://github.com/napari/napari
 [tox]: https://tox.readthedocs.io/en/latest/

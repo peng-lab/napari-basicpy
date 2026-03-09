@@ -1,10 +1,10 @@
 # napari-basicpy
 
-[![License](https://img.shields.io/pypi/l/napari-basicpy.svg?color=green)](https://github.com/tdmorello/napari-basicpy/raw/main/LICENSE)
+[![License](https://img.shields.io/pypi/l/napari-basicpy.svg?color=green)](https://github.com/peng-lab/napari-basicpy/raw/main/LICENSE)
 [![PyPI](https://img.shields.io/pypi/v/napari-basicpy.svg?color=green)](https://pypi.org/project/napari-basicpy)
 [![Python Version](https://img.shields.io/pypi/pyversions/napari-basicpy.svg?color=green)](https://python.org)
-[![tests](https://github.com/tdmorello/napari-basicpy/workflows/tests/badge.svg)](https://github.com/tdmorello/napari-basicpy/actions)
-[![codecov](https://codecov.io/gh/tdmorello/napari-basicpy/branch/main/graph/badge.svg)](https://codecov.io/gh/tdmorello/napari-basicpy)
+[![tests](https://github.com/peng-lab/napari-basicpy/workflows/tests/badge.svg)](https://github.com/peng-lab/napari-basicpy/actions)
+[![codecov](https://codecov.io/ghpeng-lab/napari-basicpy/branch/main/graph/badge.svg)](https://codecov.io/gh/peng-lab/napari-basicpy)
 [![napari hub](https://img.shields.io/endpoint?url=https://api.napari-hub.org/shields/napari-basicpy)](https://napari-hub.org/plugins/napari-basicpy)
 
 BaSiCPy illumination correction for napari
@@ -69,7 +69,7 @@ If you encounter any problems, please [file an issue] along with a detailed desc
 [Mozilla Public License 2.0]: https://www.mozilla.org/media/MPL/2.0/index.txt
 [cookiecutter-napari-plugin]: https://github.com/napari/cookiecutter-napari-plugin
 
-[file an issue]: https://github.com/tdmorello/napari-basicpy/issues
+[file an issue]: https://github.com/peng-lab/napari-basicpy/issues
 
 [napari]: https://github.com/napari/napari
 [tox]: https://tox.readthedocs.io/en/latest/

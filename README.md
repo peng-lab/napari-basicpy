@@ -33,12 +33,9 @@ You can install `napari-basicpy` via [pip]:
 
 ### Compatibility
 
-`napari-basicpy` (current version) requires **BaSiCPy ≥ 2.0**.
+`napari-basicpy` (>=1.0.0) requires **BaSiCPy ≥ 2.0**.
 
 If you need compatibility with **BaSiCPy < 2.0**, please use an earlier plugin version:
-
-    pip install napari-basicpy==0.1.0
-
 
 To install latest development version :
 
